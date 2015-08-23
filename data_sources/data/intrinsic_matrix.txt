@@ -1,0 +1,41 @@
+5.0417785095242891e+02 0.0000000000000000e+00 3.2095560744042672e+02
+0.0000000000000000e+00 5.0211839253022396e+02 2.4002402013102110e+02
+0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00
+
+
+
+Img 01: DETECTED
+Img 02: DETECTED
+Img 03: DETECTED
+Img 04: DETECTED
+Img 05: DETECTED
+Img 06: DETECTED
+Img 07: DETECTED
+Img 08: DETECTED
+Img 09: DETECTED
+Img 10: DETECTED
+Img 11: DETECTED
+Img 12: DETECTED
+12 valid images.
+Img: 01: (x,y,z,yaw,pitch,roll)=(-0.0882,-0.1808,0.7069,-88.23deg,-0.73deg,-176.66deg)
+Img: 02: (x,y,z,yaw,pitch,roll)=(-0.1645,0.0984,0.7938,-175.94deg,-11.45deg,-178.33deg)
+Img: 03: (x,y,z,yaw,pitch,roll)=(0.0466,-0.1519,0.9005,133.62deg,-31.14deg,172.79deg)
+Img: 04: (x,y,z,yaw,pitch,roll)=(0.0762,0.3171,0.7590,145.16deg,-15.11deg,-148.30deg)
+Img: 05: (x,y,z,yaw,pitch,roll)=(-0.2440,-0.0789,0.8024,157.78deg,-10.36deg,-176.31deg)
+Img: 06: (x,y,z,yaw,pitch,roll)=(0.1233,0.3259,0.7736,110.77deg,-6.18deg,-176.57deg)
+Img: 07: (x,y,z,yaw,pitch,roll)=(-0.1262,-0.3073,0.7344,-143.00deg,-4.98deg,175.80deg)
+Img: 08: (x,y,z,yaw,pitch,roll)=(0.0983,0.0254,0.6765,174.66deg,2.70deg,178.98deg)
+Img: 09: (x,y,z,yaw,pitch,roll)=(-0.1307,-0.0676,0.6548,167.93deg,20.80deg,169.99deg)
+Img: 10: (x,y,z,yaw,pitch,roll)=(0.0945,-0.4664,0.7021,-165.89deg,-0.63deg,144.38deg)
+Img: 11: (x,y,z,yaw,pitch,roll)=(0.1665,-0.3091,0.7719,-157.66deg,-17.80deg,169.37deg)
+Img: 12: (x,y,z,yaw,pitch,roll)=(0.5373,-0.2520,0.7015,-161.16deg,-47.23deg,163.88deg)
+[CAMERA_PARAMS]
+resolution=[640 480]
+cx=320.95561
+cy=240.02402
+fx=504.17785
+fy=502.11839
+dist=[-8.541216e-02 3.559430e-02 -1.212648e-04 2.928131e-03 0.000000e+00]
+
+Average err. of reprojection: 0.380944 pixels (OpenCV error=0.224036)
+

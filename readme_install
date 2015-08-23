@@ -1,0 +1,23 @@
+1.此版本是纯净为安装版。路径都改成相对路径了。。
+
+注意加载文件（相机标定的文件）的路径：
+
+2.安装 解压到任意位置
+cd 加入路径 （与camkelist相同路径下）
+cmake .    (生成Makefile文件)
+make       (生成工程文件qrcodelocalizer)
+
+3. 说明 执行程序在 /bin下
+    程序中读取的文件路径在 /qbin/data/
+
+4. 运行qrcodelocalizer(有时需要设置权限)
+  sudo chmod a+rwx qrcodelocalizer
+ 进入bin的路径  ：
+ qrcodelocalizer 绝对路径/qrcodelocalizer/data/cuhk_sz  (此文件是sz的)
+
+
+用在Qt中注意添加  执行路径       工作目录 /home/agv/Desktop/qr2/qrcodelocalizer/bin
+
+email: huasheng_zyh@163.com
+ 
+

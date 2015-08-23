@@ -1,0 +1,27 @@
+12.24  晚
+   已经实现了在机械实验室中的2d码定位
+
+
+15.1.9
+ 通过改变cmakelist 文件已经实现了在ROS下的运行。同时可以直接调用rosrun语句。
+
+注释掉：
+
+#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+#set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
+#set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
+
+
+
+这个文件结构是
+工程名： ar_localizaton
+	main：  主函数文件
+    
+    两个类： qrcodelocalizer : 之前用于定位的类，同时加上了mapping的实现函数
+            globallocalizer ： 主要是配合ROS消息操作的类。
+
+    
+
+    
+
+

@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<opencv_storage>
+<read>"camera calibration by yhzhao at 05.02.03"</read>
+<imageCount>12</imageCount>
+<cameraMatrix type_id="opencv-matrix">
+  <rows>3</rows>
+  <cols>3</cols>
+  <dt>d</dt>
+  <data>
+    5.0519443370436323e+02 0. 3.2083884160474554e+02 0.
+    5.0285768483869174e+02 2.3831697216475899e+02 0. 0. 1.</data></cameraMatrix>
+<distCoeffs type_id="opencv-matrix">
+  <rows>5</rows>
+  <cols>1</cols>
+  <dt>d</dt>
+  <data>
+    -9.2216292456289706e-02 6.5000304572855785e-02
+    -6.3123997885573520e-04 3.2158869444328347e-03
+    5.7265487017375147e-02</data></distCoeffs>
+</opencv_storage>

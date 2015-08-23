@@ -1,0 +1,64 @@
+<calibFile>./data/no_distortion_big.cal</calibFile>
+<cvCalibFile>./data/camcalibrate.xml</cvCalibFile>
+<tiltX>9.9</tiltX>
+<tiltY>8.1</tiltY>
+<mapScale>1.0366</mapScale>
+
+<imgW>640</imgW>
+<imgH>480</imgH>
+
+//<ht15>2.94</ht15>
+//<ht19>2.94</ht19>
+//<ht17>2.94</ht17>
+//<ht15>2.36</ht15>
+//<ht19>2.36</ht19>
+//<ht17>2.36</ht17>
+
+<ht15>2.62</ht15>
+<ht19>2.62</ht19>
+<ht17>2.62</ht17>
+
+<orients15>0</orients15>
+<orients19>0</orients19>
+<orients17>0</orients17>
+
+<processingType>2</processingType>
+
+<sideSizes15>37.5</sideSizes15>
+<sideSizes19>37.5</sideSizes19>
+<sideSizes17>37.5</sideSizes17>
+
+<sonyCamZoom>big</sonyCamZoom>
+<yoff15>50</yoff15>
+<yoff19>50</yoff19>
+<yoff17>50</yoff17>
+<xoff15>66.4</xoff15>
+<xoff19>268.4</xoff19>
+<xoff17>468.4</xoff17>
+
+
+<ht20>2.62</ht20>
+<orients20>0</orients20>
+<xoff20>0.0</xoff20>
+<yoff20>0.0</yoff20>
+<sideSizes20>37.5</sideSizes20>
+
+<corn0x20>-18.75</corn0x20>
+<corn0y20> 18.75</corn0y20>
+<corn0z20> 0.0  </corn0z20>
+
+<corn1x20>-18.75</corn1x20>
+<corn1y20>-18.75</corn1y20>
+<corn1z20> 0.0  </corn1z20>
+
+<corn2x20> 18.75</corn2x20>
+<corn2y20>-18.75</corn2y20>
+<corn2z20> 0.0  </corn2z20>
+
+<corn3x20> 18.75</corn3x20>
+<corn3y20> 18.75</corn3y20>
+<corn3z20> 0.0  </corn3z20>
+
+<centerx20> 0.0</centerx20>
+<centery20> 0.0</centery20>
+<centerz20> 0.0</centerz20>
