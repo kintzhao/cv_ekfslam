@@ -740,7 +740,7 @@ std::string  QrSlam::float2str(float num)
 
 void QrSlam::combineCallback(const nav_msgs::Odometry::ConstPtr& pOdom, const sensor_msgs::ImageConstPtr& pImg)  //回调中包含多个消息
 {
-    call_back++;
+//    call_back++;
     //TODO
     fStampAll<<pOdom->header.stamp<<"    "<<pImg->header.stamp<<endl;
     getOdomData(pOdom);                   //
@@ -755,9 +755,9 @@ void QrSlam::combineCallback(const nav_msgs::Odometry::ConstPtr& pOdom, const se
     FINISH_INIT_ODOM_STATIC = true;
     if(FINISH_INIT_ODOM_STATIC)
     {
-        ekf_start++;
+        //ekf_start++;
         ekfslam(robot_odom_);
-        ekf_end++;
+        //ekf_end++;
         storeData();
         showImage();
         cout << "odom:x y theta " <<robot_odom_.x << " "<< robot_odom_.y << " " << robot_odom_.theta<<endl;
@@ -775,7 +775,7 @@ void QrSlam::combineCallback(const nav_msgs::Odometry::ConstPtr& pOdom, const se
     //    }
     is_odom_update  = false ;
     is_img_update_  = false;
-   fdebug<<"    "<<call_back<<" "<<ekf_start<<" "<<ekf_end<<"   "<<endl;
+  // fdebug<<"    "<<call_back<<" "<<ekf_start<<" "<<ekf_end<<"   "<<endl;
 }
 /**
  * @brief QrSlam::getOdomData
@@ -1033,10 +1033,10 @@ Point2f QrSlam::motionModel(Point2f motion, Mat& system_state, Mat& system_state
     Point2f VEL = velocities_.at(velocities_.size()-2);  //数组从0开始  又存入一值
     VEL.x = VEL.x;
     VEL.y = VEL.y;  //  取y  标准正向
-    if ( VEL.x < 0.0006  && VEL.x >= 0)  VEL.x = 0.0;
+    if ( VEL.x < 0.0006  && VEL.x >= 0)  VEL.x = 0.0;//v
     else if ( VEL.x > -0.0006 && VEL.x <  0)  VEL.x = 0.0;
-    if ( VEL.y <  0.00001  && VEL.y >= 0)  VEL.y = 0.00001;
-    else if ( VEL.y > -0.00001  && VEL.y <  0)  VEL.y = -0.00001;
+    if ( VEL.y <  0.000001  && VEL.y >= 0)  VEL.y = 0.000001;//w
+    else if ( VEL.y > -0.000001  && VEL.y <  0)  VEL.y = -0.000001;
     cout << "Vd: " << VEL.x << "   " << " Wd " << VEL.y << " vd/wd " << VEL.x/VEL.y << endl;
     
     Mat Fx = Mat::zeros(3, 3 + 2*variable_num, CV_32FC1);
@@ -1052,9 +1052,6 @@ Point2f QrSlam::motionModel(Point2f motion, Mat& system_state, Mat& system_state
     miu_increase.at<float>(1) =   VEL.x/VEL.y * cos(last_miu_theta) - VEL.x/VEL.y * cos(last_miu_theta + VEL.y * delta_time);
     miu_increase.at<float>(2) =   VEL.y * delta_time;
 
-//    miu_increase.at<float>(0) =  -VEL.x/VEL.y * cos(last_miu_theta) - VEL.x/VEL.y * cos(last_miu_theta + VEL.y * delta_time);
-//    miu_increase.at<float>(1) =   VEL.x/VEL.y * sin(last_miu_theta) + VEL.x/VEL.y * sin(last_miu_theta + VEL.y * delta_time);
-//    miu_increase.at<float>(2) =   VEL.y * delta_time;
 
     //  prediction mean
     system_state = system_state + Fx.t()*miu_increase; // X'= X +Jaci_f(x)*delt(x)   predicted mean
@@ -1068,32 +1065,28 @@ Point2f QrSlam::motionModel(Point2f motion, Mat& system_state, Mat& system_state
     Mat I_SLAM = Mat::eye(3 + 2*variable_num, 3+2*variable_num, CV_32FC1); //算法中的单位矩阵
     Gt_increase.at<float>(0,2) = -VEL.x/VEL.y * cos(last_miu_theta) + VEL.x/VEL.y * cos(last_miu_theta+VEL.y * delta_time);
     Gt_increase.at<float>(1,2) = -VEL.x/VEL.y * sin(last_miu_theta) + VEL.x/VEL.y * sin(last_miu_theta+VEL.y * delta_time);
-
-//    Gt_increase.at<float>(0,2) = VEL.x/VEL.y * sin(last_miu_theta) + VEL.x/VEL.y * sin(last_miu_theta+VEL.y * delta_time);
-//    Gt_increase.at<float>(1,2) = VEL.x/VEL.y * cos(last_miu_theta) + VEL.x/VEL.y * cos(last_miu_theta+VEL.y * delta_time);
-
     Gt = I_SLAM + Fx.t() * Gt_increase*Fx ;
     
-//    Mat Vt = Mat::zeros(3,2,CV_32FC1);
-//    //计算Vt   Jacibi_u(v,w)
-//    Vt.at<float>(0,0) = (-sin(last_miu_theta) + sin(last_miu_theta+VEL.y * delta_time))/VEL.y;
-//    Vt.at<float>(0,1) = VEL.x*(sin(last_miu_theta)-sin(last_miu_theta+VEL.y * delta_time))/VEL.y/VEL.y+VEL.x * cos(last_miu_theta+VEL.y * delta_time)*delta_time/VEL.y;
-//    Vt.at<float>(1,0) = (cos(last_miu_theta) - cos(last_miu_theta+VEL.y * delta_time))/VEL.y;
-//    Vt.at<float>(1,1) = -VEL.x*(cos(last_miu_theta)-cos(last_miu_theta+VEL.y * delta_time))/VEL.y/VEL.y+VEL.x * sin(last_miu_theta+VEL.y * delta_time)*delta_time/VEL.y;
-//    Vt.at<float>(2,0) = 0;
-//    Vt.at<float>(2,1) = delta_time;
+    Mat Vt = Mat::zeros(3,2,CV_32FC1);
+    //计算Vt   Jacibi_u(v,w)
+    Vt.at<float>(0,0) = (-sin(last_miu_theta) + sin(last_miu_theta+VEL.y * delta_time))/VEL.y;
+    Vt.at<float>(0,1) = VEL.x*(sin(last_miu_theta)-sin(last_miu_theta+VEL.y * delta_time))/VEL.y/VEL.y+VEL.x * cos(last_miu_theta+VEL.y * delta_time)*delta_time/VEL.y;
+    Vt.at<float>(1,0) = (cos(last_miu_theta) - cos(last_miu_theta+VEL.y * delta_time))/VEL.y;
+    Vt.at<float>(1,1) = -VEL.x*(cos(last_miu_theta)-cos(last_miu_theta+VEL.y * delta_time))/VEL.y/VEL.y+VEL.x * sin(last_miu_theta+VEL.y * delta_time)*delta_time/VEL.y;
+    Vt.at<float>(2,0) = 0;
+    Vt.at<float>(2,1) = delta_time;
     
     Mat Mt = Mat::zeros(2,2,CV_32FC1);
     //计算Mt   motion noise ;  why add the motion noise   ?????
-    //        Mt.at<float>(0,0) = a1*Vd_*Vd_ + a2*Wd_*Wd_;
-    //        Mt.at<float>(1,1) = a3*Vd_*Vd_ + a4*Wd_*Wd_;
+            Mt.at<float>(0,0) = a1*VEL.x*VEL.x + a2*VEL.y*VEL.y;
+            Mt.at<float>(1,1) = a3*VEL.x*VEL.x + a4*VEL.y*VEL.y;
     //        //        Mt.at<float>(0,0) = a1;
     //        //        Mt.at<float>(0,1) = a2;
     //        //        Mt.at<float>(1,0) = a3;
     //        //        Mt.at<float>(1,1) = a4;
     
     Mat Rt = Mat::zeros(3,3,CV_32FC1); //vv
-    //        Rt = Vt * Mt * Vt.t();//计算Rt
+             Rt = Vt * Mt * Vt.t();//计算Rt
     //        Rt.at<float>(0,0) = convar_x_;
     //        Rt.at<float>(1,1) = convar_y_;
     //        Rt.at<float>(2,2) = convar_theta_;
@@ -1304,16 +1297,18 @@ void QrSlam::ekfslam(OdomMessage rob_odom)
 
         cout << " motion predict" << endl;
         Point2f robot_vel(rob_odom.v,rob_odom.w);
-        robot_vel.y = odom_theta - odom_theta_old;
+//        robot_vel.y = odom_theta - odom_theta_old;
+//        robot_vel.y = robot_vel.y/delta_t_;
         angleWrap(robot_vel.y );
-        robot_vel.y = robot_vel.y/delta_t_;
+
         Point2f robot_increase = motionModel(robot_vel, miu_state, miu_convar_p, observed_mark_num_old, delta_t_);
+        //miu_state.at<float>(2) = rob_odom.theta;
         //miu_state.at<float>(2) = rob_odom.theta; // 假定角度正确
         num_EKFSlam_predict_++;
         
         cout << "observation start !" << endl;
         
-        static Point3f last_update_pose(0.0,0.0,0.0);
+        static Point3f last_update_pose(-2.0,-2.0,-1.0);
         Point2f update_increase,increase_xy;
         increase_xy.x = miu_state.at<float>(0) - last_update_pose.x;
         increase_xy.y = miu_state.at<float>(1) - last_update_pose.y;
@@ -1324,8 +1319,8 @@ void QrSlam::ekfslam(OdomMessage rob_odom)
         if(is_img_update_ ) //&& ( abs(delta_stamp) <= stamp_interval) )
         {
             num_time_interval++;
-                      if( ( (update_increase.x >= update_odom_linear_ ) || (update_increase.y >= update_odom_angle_ ) ) )
-            //  if (0)
+            //          if( ( (update_increase.x >= update_odom_linear_ ) || (update_increase.y >= update_odom_angle_ ) ) )
+           if (1)
             {
                 cout << " get observation" << endl;
                 getObservations();

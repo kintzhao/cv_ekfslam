@@ -601,18 +601,18 @@ void DetctQrcode::drawQrcode(void)   //draw the square-qrcode_fourSide
             cv::line(show_landmark_img_,cv::Point(Mark_.vertex[3][0],Mark_.vertex[3][1]),cv::Point(Mark_.vertex[0][0],Mark_.vertex[0][1]),CV_RGB(255,0,0),1,8);
 
             string dir_str = int2str(Mark_.dir);
-            string tx0 = int2str((4-Mark_.dir+0)%4);
-            string tx1 = int2str((4-Mark_.dir+1)%4);
-            string tx2 = int2str((4-Mark_.dir+2)%4);
-            string tx3 = int2str((4-Mark_.dir+3)%4);
+            string tx0 = "0";//int2str((4-Mark_.dir+0)%4);
+            string tx1 = "1";//int2str((4-Mark_.dir+1)%4);
+            string tx2 = "2";//int2str((4-Mark_.dir+2)%4);
+            string tx3 = "3";//int2str((4-Mark_.dir+3)%4);
             cv::putText(show_landmark_img_,dir_str,cv::Point(400,400),CV_FONT_HERSHEY_COMPLEX,2,CV_RGB(0,0,255));
-            cv::putText(show_landmark_img_,tx0,cv::Point(Mark_.vertex[(4-Mark_.dir+0)%4][0],Mark_.vertex[(4-Mark_.dir+0)%4][1]),CV_FONT_HERSHEY_COMPLEX,1,CV_RGB(0,0,0));
-            cv::putText(show_landmark_img_,tx1,cv::Point(Mark_.vertex[(4-Mark_.dir+1)%4][0],Mark_.vertex[(4-Mark_.dir+1)%4][1]),CV_FONT_HERSHEY_COMPLEX,1,CV_RGB(0,0,0));
-            cv::putText(show_landmark_img_,tx2,cv::Point(Mark_.vertex[(4-Mark_.dir+2)%4][0],Mark_.vertex[(4-Mark_.dir+2)%4][1]),CV_FONT_HERSHEY_COMPLEX,1,CV_RGB(0,0,0));
-            cv::putText(show_landmark_img_,tx3,cv::Point(Mark_.vertex[(4-Mark_.dir+3)%4][0],Mark_.vertex[(4-Mark_.dir+3)%4][1]),CV_FONT_HERSHEY_COMPLEX,1,CV_RGB(0,0,0));
+            cv::putText(show_landmark_img_,tx0,cv::Point(Mark_.vertex[(4-Mark_.dir+0)%4][0],Mark_.vertex[(4-Mark_.dir+0)%4][1]),CV_FONT_HERSHEY_COMPLEX,1,CV_RGB(255,0,0));
+            cv::putText(show_landmark_img_,tx1,cv::Point(Mark_.vertex[(4-Mark_.dir+1)%4][0],Mark_.vertex[(4-Mark_.dir+1)%4][1]),CV_FONT_HERSHEY_COMPLEX,1,CV_RGB(255,0,0));
+            cv::putText(show_landmark_img_,tx2,cv::Point(Mark_.vertex[(4-Mark_.dir+2)%4][0],Mark_.vertex[(4-Mark_.dir+2)%4][1]),CV_FONT_HERSHEY_COMPLEX,1,CV_RGB(255,0,0));
+            cv::putText(show_landmark_img_,tx3,cv::Point(Mark_.vertex[(4-Mark_.dir+3)%4][0],Mark_.vertex[(4-Mark_.dir+3)%4][1]),CV_FONT_HERSHEY_COMPLEX,1,CV_RGB(255,0,0));
 
             std::string text ="ID_"+ int2str(Mark_.id);
-            cv::putText(show_landmark_img_,text,Point(Mark_.pos[0],Mark_.pos[1]),CV_FONT_HERSHEY_COMPLEX,1,CV_RGB(255,0,0));
+            cv::putText(show_landmark_img_,text,Point(Mark_.pos[0]+80,Mark_.pos[1]),CV_FONT_HERSHEY_COMPLEX,1,CV_RGB(255,0,0));
 
             cv::rectangle(show_landmark_img_,Point(Mark_.pos[0]-1,Mark_.pos[1]-1),Point(Mark_.pos[0]+1,Mark_.pos[1]+1),CV_RGB(0,255,0),1,8); //圈取图像中心点
 

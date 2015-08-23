@@ -134,10 +134,10 @@ public :
 //    const float a3 = 0.1203;//0.1;
 //    const float a4 = -0.0037;//0.1;
 
-     const float a1 = 0.05;//0.1;
-     const float a2 = 0.0032;//0.1;
-     const float a3 = 0.0032;//0.1;
-     const float a4 = 0.0016;//0.1;
+     const float a1 = 0.001;//0.1;
+     const float a2 = 0;//0.1;
+     const float a3 = 0;//0.1;
+     const float a4 = 0.005;//0.1;
 
 
 //    const float a5 = 0.1;
