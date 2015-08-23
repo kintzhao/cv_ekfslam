@@ -1259,7 +1259,6 @@ void QrSlam::updateSystemState(Mat& system_state, Mat& system_state_convar, int 
  */
 void  QrSlam::showImage()
 {
-
     showRobot(raw_global_map_, robot_odom_, CV_RGB(0,0,0)) ;
 
     showSystemStateRobot(raw_global_map_,CV_RGB(0,0,255));
@@ -1296,10 +1295,10 @@ void QrSlam::ekfslam(OdomMessage rob_odom)
         delta_t_ = (time_bag_ - time_bag_old).toSec(); //  秒
 
         cout << " motion predict" << endl;
-        Point2f robot_vel(rob_odom.v,rob_odom.w);
+        Point2f robot_vel(rob_odom.v,-1.0*rob_odom.w);  //注 角速度取反
 //        robot_vel.y = odom_theta - odom_theta_old;
 //        robot_vel.y = robot_vel.y/delta_t_;
-        angleWrap(robot_vel.y );
+//        angleWrap(robot_vel.y );
 
         Point2f robot_increase = motionModel(robot_vel, miu_state, miu_convar_p, observed_mark_num_old, delta_t_);
         //miu_state.at<float>(2) = rob_odom.theta;

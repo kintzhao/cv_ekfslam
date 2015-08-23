@@ -514,6 +514,11 @@ vector<CPointsFour> DetctQrcode::detectRawLandmarks(cv::Mat image, int &MarkNum)
                     if (Mark_info.id == detectedID[ii])
                     {
                         id_was_detected = true;
+                        if( 20 == Mark_info.id)
+                        {
+                           Mark_info.dir = Mark_info.dir +1;
+                        }
+
                         ConerPoint  center,corner0,corner1,corner2,corner3 ;
                         center.init(Mark_info.pos[0],Mark_info.pos[1]) ;
                         corner0.init(Mark_info.vertex[(4-Mark_info.dir+0)%4][0],Mark_info.vertex[(4-Mark_info.dir+0)%4][1]) ;
@@ -530,7 +535,10 @@ vector<CPointsFour> DetctQrcode::detectRawLandmarks(cv::Mat image, int &MarkNum)
                 if (id_was_detected == false)   //主要是为了多阈值处理下（在循环 while(tryCount < 253)下只进来一次）先填充满ID_X容器，确定好detectedID的数量。
                 {                       // X_arr的填充顺序是nMarker_info[i]中i的顺序。。
                     detectedID.push_back(Mark_info.id);
-
+                    if( 20 == Mark_info.id)
+                    {
+                       Mark_info.dir = Mark_info.dir +1;
+                    }
                     ConerPoint  center,corner0,corner1,corner2,corner3 ;
                     center.init(Mark_info.pos[0],Mark_info.pos[1]) ;
                     corner0.init(Mark_info.vertex[(4-Mark_info.dir+0)%4][0],Mark_info.vertex[(4-Mark_info.dir+0)%4][1]) ;
@@ -605,6 +613,15 @@ void DetctQrcode::drawQrcode(void)   //draw the square-qrcode_fourSide
             string tx1 = "1";//int2str((4-Mark_.dir+1)%4);
             string tx2 = "2";//int2str((4-Mark_.dir+2)%4);
             string tx3 = "3";//int2str((4-Mark_.dir+3)%4);
+            if( 20 == Mark_.id)
+            {
+               Mark_.dir = Mark_.dir +1;
+               dir_str = int2str(Mark_.dir);
+               tx0 = "0";//int2str((4-Mark_.dir+0)%4);
+               tx1 = "1";//int2str((4-Mark_.dir+1)%4);
+               tx2 = "2";//int2str((4-Mark_.dir+2)%4);
+               tx3 = "3";//int2str((4-Mark_.dir+3)%4);
+            }
             cv::putText(show_landmark_img_,dir_str,cv::Point(400,400),CV_FONT_HERSHEY_COMPLEX,2,CV_RGB(0,0,255));
             cv::putText(show_landmark_img_,tx0,cv::Point(Mark_.vertex[(4-Mark_.dir+0)%4][0],Mark_.vertex[(4-Mark_.dir+0)%4][1]),CV_FONT_HERSHEY_COMPLEX,1,CV_RGB(255,0,0));
             cv::putText(show_landmark_img_,tx1,cv::Point(Mark_.vertex[(4-Mark_.dir+1)%4][0],Mark_.vertex[(4-Mark_.dir+1)%4][1]),CV_FONT_HERSHEY_COMPLEX,1,CV_RGB(255,0,0));
