@@ -1,6 +1,6 @@
- function [] = fdisplaymark(marks,num)
-% marks = qrmeterdata;
-% num = 1;
+%  function [] = fdisplaymark(marks,num)
+marks = qrmeterdata;
+num = 1;
 figure(num)
 [hang,lie] = size(marks);
 title('r g b k y 0 1 2 3 middle');
@@ -12,7 +12,7 @@ for row = 500:1:hang
     k = marks(row,1);
     row
     for num = 1:k
-        figure(marks(row, 2+11*(num-1)));
+%         figure(marks(row, 2+11*(num-1)));
         plot(marks(row, 2+11*(num-1)+1),marks(row, 2+11*(num-1)+2),'r*'); hold on;
         line( [marks(row, 2+11*(num-1)+1), marks(row, 2+11*(num-1)+3) ],[ marks(row, 2+11*(num-1)+2), marks(row, 2+11*(num-1)+4) ] );hold on;
         

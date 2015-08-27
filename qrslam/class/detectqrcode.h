@@ -240,6 +240,9 @@ public:
     CPointsFour averageCPointsFour(vector<CPointsFour> data, double multiplier, double shift, double range ,int bucketAmount);
     void  imgCornerToWorld(CPointsFour &point_four) ;
     void  imgCornerToWorld(CPointsFour& dst,CPointsFour& src);
+    void  pixToMeter(CPointsFour& dst,CPointsFour& src);
+    void scaleFromSide(float scale[],float side[],int id);
+    ConerPoint pixToMeterFromScale(double width,double height,float scale);
     bool readMarkForLocalization(int id) ;
     bool readConfigureMessage(int max_num);
 };

@@ -1099,8 +1099,6 @@ void DetctQrcode::imgCornerToWorld(CPointsFour& dst,CPointsFour& src)
     dst.center = imTotruePos(src.center.X,src.center.Y,src.ID);
     dst.ID = src.ID;
 }
-
-
 //旋转是相对
 /**
  * @brief DetctQrcode::imTotruePos
@@ -1109,21 +1107,6 @@ void DetctQrcode::imgCornerToWorld(CPointsFour& dst,CPointsFour& src)
  * @param height    高（x向）--> y
  * @param id
  */
-
-//void DetctQrcode::imTotruePos(double &width,double &height,int id)
-//{
-//    double centXoff = height - camInnerPara.dy;
-//    double centYoff = camInnerPara.dx - width ;          //采取内参校正数值
-////    double centXoff = height -240;
-////    double centYoff = 320 - width ;
-//    //double camInnerFocus =sqrt(camInnerPara.fx*camInnerPara.fx + camInnerPara.fy* camInnerPara.fy) ;
-//    double x_cm  = centXoff * ht_[id] / camInnerPara.fy; //camInnerFocus;
-//    double y_cm =  centYoff * ht_[id] / camInnerPara.fx; //camInnerFocus;
-
-//    width  = x_cm;
-//    height = y_cm;       // X-Height   Y-Width
-//}
-
 ConerPoint DetctQrcode::imTotruePos(double width,double height,int id)
 {
     double centXoff = height - camInnerPara.dy;
@@ -1131,6 +1114,71 @@ ConerPoint DetctQrcode::imTotruePos(double width,double height,int id)
 
     double x_cm  = centXoff * ht_[id] / camInnerPara.fy; //camInnerFocus;
     double y_cm =  centYoff * ht_[id] / camInnerPara.fx; //camInnerFocus;
+
+    ConerPoint cornPoint;
+    cornPoint.init(x_cm,y_cm);
+   return  cornPoint;
+}
+
+/**
+ * @brief DetctQrcode::imgToWorld
+ * 将图像提取的像素坐标值转换成实际的物理距离值  --->利用已知二维码的边信息
+ * @param point_four   五点集
+ */
+void DetctQrcode::pixToMeter(CPointsFour& dst,CPointsFour& src)
+{
+    float side[4];
+    float side0x = (src.corn0.X - src.corn1.X)*(src.corn0.X - src.corn1.X);
+    float side0y = (src.corn0.Y - src.corn1.Y)*(src.corn0.Y - src.corn1.Y);
+          side[0]  = sqrt(side0x + side0y);
+
+    float side1x = (src.corn1.X - src.corn2.X)*(src.corn1.X - src.corn2.X);
+    float side1y = (src.corn1.Y - src.corn2.Y)*(src.corn1.Y - src.corn2.Y);
+          side[1]  = sqrt(side1x + side1y);
+
+    float side2x = (src.corn2.X - src.corn3.X)*(src.corn2.X - src.corn3.X);
+    float side2y = (src.corn2.Y - src.corn3.Y)*(src.corn2.Y - src.corn3.Y);
+          side[2]  = sqrt(side2x + side2y);
+
+    float side3x = (src.corn3.X - src.corn0.X)*(src.corn3.X - src.corn0.X);
+    float side3y = (src.corn3.Y - src.corn0.Y)*(src.corn3.Y - src.corn0.Y);
+          side[3]  = sqrt(side3x + side3y);
+
+    float scale[4];
+    scaleFromSide(scale,side,src.ID);
+    float scale_center = (scale[0] + scale[1] + scale[2] + scale[3])/4;
+
+    dst.corn0 = pixToMeterFromScale( src.corn0.X, src.corn0.Y,scale[0]);
+    dst.corn1 = pixToMeterFromScale( src.corn1.X, src.corn1.Y,scale[1]);
+    dst.corn2 = pixToMeterFromScale( src.corn2.X, src.corn2.Y,scale[2]);
+    dst.corn3 = pixToMeterFromScale( src.corn3.X, src.corn3.Y,scale[3]);
+    dst.center = pixToMeterFromScale(src.center.X,src.center.Y,scale_center);
+    dst.ID = src.ID;
+}
+
+void DetctQrcode::scaleFromSide(float scale[],float side[],int id)
+{
+  scale[0] = sqrt((side_sizes_[id]/side[0])*(side_sizes_[id]/side[0]) +
+                   (side_sizes_[id]/side[3])*(side_sizes_[id]/side[3])   );
+
+  scale[1] = sqrt((side_sizes_[id]/side[0])*(side_sizes_[id]/side[0]) +
+                   (side_sizes_[id]/side[1])*(side_sizes_[id]/side[1])   );
+
+  scale[2] = sqrt((side_sizes_[id]/side[2])*(side_sizes_[id]/side[2]) +
+                   (side_sizes_[id]/side[1])*(side_sizes_[id]/side[1])   );
+
+  scale[3] = sqrt((side_sizes_[id]/side[2])*(side_sizes_[id]/side[2]) +
+                   (side_sizes_[id]/side[3])*(side_sizes_[id]/side[3])   );
+}
+
+
+ConerPoint DetctQrcode::pixToMeterFromScale(double width, double height, float scale)
+{
+    double centXoff = height - camInnerPara.dy;
+    double centYoff = camInnerPara.dx - width ;          //采取内参校正数值
+
+    double x_cm  = centXoff * scale; //camInnerFocus;
+    double y_cm =  centYoff * scale; //camInnerFocus;
 
     ConerPoint cornPoint;
     cornPoint.init(x_cm,y_cm);

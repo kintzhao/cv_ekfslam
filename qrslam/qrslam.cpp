@@ -35,6 +35,10 @@ ofstream fdebug("debug.txt");
 
 QrSlam::QrSlam(char* addr):transport_( ar_handle)
 {
+    IS_SYSTEM_TRANSFER_ = false;
+    map_lock_.x = 0.0;
+    map_lock_.y = 0.0;
+    map_lock_.z = 0.0;
     call_back = 0;
     ekf_start =0;
     ekf_end = 0;
@@ -267,20 +271,22 @@ Point3f QrSlam::diffCoordinate(CPointsFour mark_2d,CPointsFourWorld mark_2d_worl
 {
     Point3f coordinate_data;
     float d_x ,d_y,d_theta ;
-    d_x = 1.0* (   (mark_2d.corn0.X - mark_2d_world.corn0.X) +(mark_2d.corn1.X - mark_2d_world.corn1.X)
-                   +(mark_2d.corn2.X - mark_2d_world.corn2.X) +(mark_2d.corn3.X - mark_2d_world.corn3.X)
+    d_x = 1.0* (    (mark_2d.corn0.X  - mark_2d_world.corn0.X) +(mark_2d.corn1.X - mark_2d_world.corn1.X)
+                   +(mark_2d.corn2.X  - mark_2d_world.corn2.X) +(mark_2d.corn3.X - mark_2d_world.corn3.X)
                    +(mark_2d.center.X - mark_2d_world.center.X)
                    )/5 ;
     
-    d_y = 1.0* (   (mark_2d.corn0.Y - mark_2d_world.corn0.Y) +(mark_2d.corn1.Y - mark_2d_world.corn1.Y)
-                   +(mark_2d.corn2.Y - mark_2d_world.corn2.Y) +(mark_2d.corn3.Y - mark_2d_world.corn3.Y)
+    d_y = 1.0* (    (mark_2d.corn0.Y  - mark_2d_world.corn0.Y) +(mark_2d.corn1.Y - mark_2d_world.corn1.Y)
+                   +(mark_2d.corn2.Y  - mark_2d_world.corn2.Y) +(mark_2d.corn3.Y - mark_2d_world.corn3.Y)
                    +(mark_2d.center.Y - mark_2d_world.center.Y)
                    )/5 ;
-    
-    d_theta = 1.0*(  atan2(  (mark_2d.corn3.Y - mark_2d.corn0.Y ),(mark_2d.corn3.X - mark_2d.corn0.X ))
-                     +atan2( (mark_2d.corn2.Y - mark_2d.corn1.Y ),(mark_2d.corn2.X - mark_2d.corn1.X ))
+//保留原mark 20 顺序的情况下
+//    d_theta = 1.0*(  atan2(  (mark_2d.corn3.Y - mark_2d.corn0.Y ),(mark_2d.corn3.X - mark_2d.corn0.X ))
+//                     +atan2( (mark_2d.corn2.Y - mark_2d.corn1.Y ),(mark_2d.corn2.X - mark_2d.corn1.X ))
+//                     )/2;
+    d_theta = 1.0*(  atan2(  (mark_2d.corn3.Y - mark_2d.corn2.Y ),(mark_2d.corn3.X - mark_2d.corn2.X ))
+                     +atan2( (mark_2d.corn0.Y - mark_2d.corn1.Y ),(mark_2d.corn0.X - mark_2d.corn1.X ))
                      )/2;
-    
     coordinate_data.x = d_x;
     coordinate_data.y = d_y;
     coordinate_data.z = d_theta;
@@ -351,7 +357,6 @@ Point3ffi QrSlam::addObservationPos(ConerPoint landmarktemp ,int id )
     fobsevation <<" "<<  mark_temp.z <<" "<< mark_temp.x <<" "<< mark_temp.y <<endl;
     return mark_temp;
 }
-
 
 /**
  * @brief QrSlam::genGaussianValue
@@ -440,7 +445,8 @@ void QrSlam::showRobotOrientation(Mat image, OdomMessage rob_odom,Scalar rgb,int
     robot_pose.x = rob_odom.x;
     robot_pose.y = rob_odom.y;
     robot_pose.z = rob_odom.theta;
-    
+    WorldToMark3(robot_pose,robot_pose);       //采用地图固定下  初始坐标系调整就可以
+
 #if  IS_ALL_SYSTEM_AS_MARK_COORDNATE
     WorldToMark3(robot_pose,robot_pose);       //初始坐标系调整就可以
 #endif
@@ -544,7 +550,8 @@ void QrSlam::showRobot(cv::Mat& map, OdomMessage rob_odom,Scalar rgb)
     robot_pose.x = rob_odom.x;
     robot_pose.y = rob_odom.y;
     robot_pose.z = rob_odom.theta;
-    
+    WorldToMark3(robot_pose,robot_pose);       //采用地图固定下  初始坐标系调整就可以
+
 #if IS_ALL_SYSTEM_AS_MARK_COORDNATE
     WorldToMark3(robot_pose,robot_pose);       //初始坐标系调整就可以
 #endif
@@ -617,7 +624,8 @@ void QrSlam::showSystemStateLandmark(cv::Mat& map, Scalar rgb)
     // cv::Mat map_copy ;
     for (int t = 0; t < observed_landmark_num.size(); t++)
     {
-#if DISPLAY_UNDER_MARK_COORDINATE
+//#if DISPLAY_UNDER_MARK_COORDINATE
+#if       IS_ALL_SYSTEM_AS_MARK_COORDNATE
         Point3d robot_pose_src, robot_pose_dst;
         robot_pose_src.x = miu_state.at<float>(3+t*2);
         robot_pose_src.y = miu_state.at<float>(4+t*2);     // ****坐标系反转  逆转实际为负  测量为正
@@ -668,8 +676,8 @@ void QrSlam::showSystemStateLandmark(cv::Mat& map, Scalar rgb)
  */
 void QrSlam::showSystemStateRobot(cv::Mat& map, Scalar rgb)
 {
-    
-#if DISPLAY_UNDER_MARK_COORDINATE
+    //#if DISPLAY_UNDER_MARK_COORDINATE
+#if       IS_ALL_SYSTEM_AS_MARK_COORDNATE
     Point3d robot_pose_src, robot_pose_dst;
     robot_pose_src.x = miu_state.at<float>(0);
     robot_pose_src.y = miu_state.at<float>(1);     // ****坐标系反转  逆转实际为负  测量为正
@@ -752,27 +760,33 @@ void QrSlam::combineCallback(const nav_msgs::Odometry::ConstPtr& pOdom, const se
           << " " << robot_odom_.v << " " << robot_odom_.w << std::endl;
     pixDataToMetricData();
     static bool FINISH_INIT_ODOM_STATIC = false;
-    FINISH_INIT_ODOM_STATIC = true;
+//   FINISH_INIT_ODOM_STATIC = true;
     if(FINISH_INIT_ODOM_STATIC)
     {
         //ekf_start++;
-        ekfslam(robot_odom_);
+         ekfslam(robot_odom_);
+#if !IS_ONE_POINT_AS_LANDMARK
+        if(IS_SYSTEM_TRANSFER_)
+        {
+            mapTransforDiff(miu_state);     //五点式才有方向调整
+        }
+#endif
         //ekf_end++;
         storeData();
         showImage();
         cout << "odom:x y theta " <<robot_odom_.x << " "<< robot_odom_.y << " " << robot_odom_.theta<<endl;
         cout <<" ekf: x y theta "<<miu_state.at<float>(0)<<" "<< miu_state.at<float>(1) <<" "<<miu_state.at<float>(2)<<endl;
     }
-    //    else if(is_img_update_)
-    //    {
-    //        if(addInitVectorFull())
-    //        {
-    //            cout<<"go into coordinate transfer"<<endl;
-    //            computerCoordinate();
-    //            FINISH_INIT_ODOM_STATIC = true;
-    //            cout<<"finish coordinate transfer"<<endl;
-    //        }
-    //    }
+    else if(is_img_update_)
+    {
+        if(addInitVectorFull())
+        {
+            cout<<"go into coordinate transfer"<<endl;
+            computerCoordinate();
+            FINISH_INIT_ODOM_STATIC = true;
+            cout<<"finish coordinate transfer"<<endl;
+        }
+    }
     is_odom_update  = false ;
     is_img_update_  = false;
   // fdebug<<"    "<<call_back<<" "<<ekf_start<<" "<<ekf_end<<"   "<<endl;
@@ -865,7 +879,8 @@ void QrSlam::pixDataToMetricData()
     {
         CPointsFour  dst;
         CPointsFour  src = landmark5_pix_vector_.at(i);
-        pQrDetect_->imgCornerToWorld( dst, src);
+        pQrDetect_->imgCornerToWorld( dst, src);  // 利用已知高度信息
+        //pQrDetect_->pixToMeter( dst, src);         //  利用已知边长信息
         landmark5_meter_vector_.push_back(dst);
     }
     saveMeterDatas(landmark5_meter_vector_);
@@ -873,9 +888,10 @@ void QrSlam::pixDataToMetricData()
 void QrSlam::computerCoordinate()
 {
     CPointsFour mark_2d = pQrDetect_->averageCPointsFour(mark5_init_vector_,10.0,0.0,2.0,6420);
-    CPointsFourWorld mark_2d_world = pQrDetect_->getInitMarkMessage(SELECT_MARK_FOR_INIT_);
+
+    mark_2d_world_ = pQrDetect_->getInitMarkMessage(SELECT_MARK_FOR_INIT_);
     
-    Point3f diff_data = diffCoordinate(mark_2d, mark_2d_world);
+    Point3f diff_data = diffCoordinate(mark_2d, mark_2d_world_);
     coordinate_x_ = diff_data.x ;
     coordinate_y_ = diff_data.y ;
     coordinate_angle_ = diff_data.z;
@@ -1133,7 +1149,7 @@ void QrSlam::updateSystemState(Mat& system_state, Mat& system_state_convar, int 
     for (vector<Point3ffi>::size_type i=0; i<observation_Marks_per_image.size(); i++)
     {
         IS_FIRST_OBSERVED = true;
-        Qid = observation_Marks_per_image.at(i).z;
+        Qid = observation_Marks_per_image.at(i).z;  //mark的ID
         z = Point2f(observation_Marks_per_image.at(i).x,observations_.at(i).y); //观测值  是极坐标
         for (vector<int>::size_type c=0; c<Lm_observed_Num.size(); ++c)
         {
@@ -1176,6 +1192,10 @@ void QrSlam::updateSystemState(Mat& system_state, Mat& system_state_convar, int 
         }
         else
         {
+            if( SELECT_MARK_FOR_INIT_ == Qid/5 )   // 出现过就可以开始进行转移变换
+            {
+              IS_SYSTEM_TRANSFER_ = true;
+            }
             //这里的z相当于landmark的标号  （全局坐标下： 地图值- 预测机器人值）与 观测值 z ： 表示mark与robot的相对距离
             delta = Point2f(system_state.at<float>(2*j+3), system_state.at<float>(2*j+4)) - Point2f(system_state.at<float>(0),system_state.at<float>(1));
             distance_2 = delta.x * delta.x + delta.y * delta.y ;
@@ -1318,8 +1338,8 @@ void QrSlam::ekfslam(OdomMessage rob_odom)
         if(is_img_update_ ) //&& ( abs(delta_stamp) <= stamp_interval) )
         {
             num_time_interval++;
-            //          if( ( (update_increase.x >= update_odom_linear_ ) || (update_increase.y >= update_odom_angle_ ) ) )
-           if (1)
+          //  if( ( (update_increase.x >= update_odom_linear_ ) || (update_increase.y >= update_odom_angle_ ) ) )
+            if (1)
             {
                 cout << " get observation" << endl;
                 getObservations();
@@ -1365,6 +1385,52 @@ void QrSlam::ekfslam(OdomMessage rob_odom)
     storeSystemState(miu_state);
 }
 
+void QrSlam::mapTransforDiff(Mat& sys_state)
+{
+    CPointsFour mark_2d;
+    for (vector<int>::size_type c=0; c<Lm_observed_Num.size(); ++c)
+    {
+        switch (Lm_observed_Num[c]%(20*5))   //   出现过   逐一比对已经观察到的mark列表
+        {
+            case 0: mark_2d.corn0.init(sys_state.at<float>(3+2*c),sys_state.at<float>(4+2*c));break;
+            case 1: mark_2d.corn1.init(sys_state.at<float>(3+2*c),sys_state.at<float>(4+2*c));break;
+            case 2: mark_2d.corn2.init(sys_state.at<float>(3+2*c),sys_state.at<float>(4+2*c));break;
+            case 3: mark_2d.corn3.init(sys_state.at<float>(3+2*c),sys_state.at<float>(4+2*c));break;
+            case 4: mark_2d.center.init(sys_state.at<float>(3+2*c),sys_state.at<float>(4+2*c));break;
+            default:break;
+        }
+    }
+      map_lock_ = diffCoordinate(mark_2d, mark_2d_world_);
+    fcoordinate_init<<"x y theta: "<<map_lock_.x<<"  "<<map_lock_.y<<"  "<<map_lock_.z<<" "<<endl;
+    systemTransfore(sys_state);
+//    WorldToMark3(robot_pose,robot_pose);       //初始坐标系调整就可以
+}
 
+void QrSlam::systemTransfore(Mat& sys_state)
+{
+    Point3d dst;   //robot state         //robot_odom_   是里程计算上传式(固定式旋转与平移)非增量计算式, landmark一次调整大,后面变化小.
+    cout<<"robot_odom_. (0 1 2)"<<robot_odom_.x <<" "<<robot_odom_.y <<" "<<robot_odom_.theta <<endl;
 
+    cout<<"sys_state. (0 1 2)"<<sys_state.at<float>(0) <<" "<<sys_state.at<float>(1) <<" "<<sys_state.at<float>(2) <<endl;
+    dst.x =  cos(map_lock_.z) * sys_state.at<float>(0) + sin(map_lock_.z) * sys_state.at<float>(1) - map_lock_.x;
+    dst.y = -sin(map_lock_.z) * sys_state.at<float>(0) + cos(map_lock_.z) * sys_state.at<float>(1) - map_lock_.y;
+    dst.z =  sys_state.at<float>(2) - map_lock_.z;
 
+    sys_state.at<float>(0) = dst.x;
+    sys_state.at<float>(1) = dst.y;
+    sys_state.at<float>(2) = dst.z;
+
+    cout<<"sys_state. (0 1 2)"<<sys_state.at<float>(0) <<" "<<sys_state.at<float>(1) <<" "<<sys_state.at<float>(2) <<endl;
+//    cout<<"sys_state. (0 1 2)"<<dst.x <<" "<<dst.y <<" "<<dst.z<<endl;
+    for(int i=0; i<Lm_observed_Num.size(); i++)
+    {
+        cout<<"sys_state. i(3/4+2*i)"<<i<<" "<<sys_state.at<float>(3+2*i) <<" "<<sys_state.at<float>(4+2*i) <<endl;
+        dst.x =  cos(map_lock_.z) * sys_state.at<float>(3+2*i) + sin(map_lock_.z) * sys_state.at<float>(4+2*i) - map_lock_.x;
+        dst.y = -sin(map_lock_.z) * sys_state.at<float>(3+2*i) + cos(map_lock_.z) * sys_state.at<float>(4+2*i) - map_lock_.y;
+        sys_state.at<float>(3+2*i) = dst.x;
+        sys_state.at<float>(4+2*i) = dst.y;
+        cout<<"sys_state. i(3/4+2*i)"<<i<<" "<<sys_state.at<float>(3+2*i) <<" "<<sys_state.at<float>(4+2*i) <<endl;
+//        cout<<"sys_state. i(3/4+2*i)"<<i<<" "<<dst.x <<" "<<dst.y <<endl;
+
+    }
+}

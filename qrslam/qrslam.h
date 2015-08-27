@@ -46,7 +46,7 @@
 #define IS_OPEN_BUBBLE_FILTER 0      //   角速度打开数据滤波_冒泡：去大小值
 #define IS_ONE_POINT_AS_LANDMARK 0   //  从2D mark中提取landmark的数量  1只选择中心点 ；0 选择五点
 #define IS_OPEN_DYNAMIC_MAP 0   // 0 表示只绘制当前的系统状态landmark,深度复制 ;1表示动态的整个过程
-#define DISPLAY_UNDER_MARK_COORDINATE 0   // 0表示在odom坐标系下 ;1表示转换到mark下的显示
+//#define DISPLAY_UNDER_MARK_COORDINATE 1   // 0表示在odom坐标系下 ;1表示转换到mark下的显示
 #define IS_ALL_SYSTEM_AS_MARK_COORDNATE 0   //PS: 与 DISPLAY_UNDER_MARK_COORDINATE 存在两者分立,不开同时  ekfslam初始就进行转换
 
 typedef message_filters::sync_policies::ApproximateTime<nav_msgs::Odometry, sensor_msgs::Image> slamSyncPolicy;
@@ -274,6 +274,11 @@ public:
     int call_back;
     int ekf_start;
     int ekf_end;
+    CPointsFourWorld mark_2d_world_ ;
+    bool  IS_SYSTEM_TRANSFER_; //注意两个,初始定位mark状态已经观测过才参与, 而系统状态需要转换的数量
+    Point3f  map_lock_;
+    vector<Point3f>  state_v_;
+    vector< vector<Point3f> > states_vv_;
 
     void combineCallback(const nav_msgs::Odometry::ConstPtr& pOdom, const sensor_msgs::ImageConstPtr& pImg) ;
     void getOdomData(const nav_msgs::Odometry::ConstPtr& odomMsg);
@@ -285,6 +290,8 @@ public:
     void saveMeterDatas( vector<CPointsFour> vector_data );
     void ekfslam(OdomMessage rob_odom);
 
+    void mapTransforDiff(Mat& sys_state);
+    void systemTransfore(Mat& sys_state);
 };
 
 #endif

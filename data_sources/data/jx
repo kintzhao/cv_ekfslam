@@ -43,22 +43,42 @@
 <yoff20>0.0</yoff20>
 <sideSizes20>37.5</sideSizes20>
 
-<corn0x20>-18.75</corn0x20>
+<corn0x20> 18.75</corn0x20>
 <corn0y20> 18.75</corn0y20>
 <corn0z20> 0.0  </corn0z20>
 
 <corn1x20>-18.75</corn1x20>
-<corn1y20>-18.75</corn1y20>
+<corn1y20> 18.75</corn1y20>
 <corn1z20> 0.0  </corn1z20>
 
-<corn2x20> 18.75</corn2x20>
+<corn2x20>-18.75</corn2x20>
 <corn2y20>-18.75</corn2y20>
 <corn2z20> 0.0  </corn2z20>
 
 <corn3x20> 18.75</corn3x20>
-<corn3y20> 18.75</corn3y20>
+<corn3y20>-18.75</corn3y20>
 <corn3z20> 0.0  </corn3z20>
 
 <centerx20> 0.0</centerx20>
 <centery20> 0.0</centery20>
 <centerz20> 0.0</centerz20>
+
+#<corn0x20>-18.75</corn0x20>
+#<corn0y20> 18.75</corn0y20>
+#<corn0z20> 0.0  </corn0z20>
+#
+#<corn1x20>-18.75</corn1x20>
+#<corn1y20>-18.75</corn1y20>
+#<corn1z20> 0.0  </corn1z20>
+#
+#<corn2x20> 18.75</corn2x20>
+#<corn2y20>-18.75</corn2y20>
+#<corn2z20> 0.0  </corn2z20>
+#
+#<corn3x20> 18.75</corn3x20>
+#<corn3y20> 18.75</corn3y20>
+#<corn3z20> 0.0  </corn3z20>
+#
+#<centerx20> 0.0</centerx20>
+#<centery20> 0.0</centery20>
+#<centerz20> 0.0</centerz20>
